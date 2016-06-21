@@ -9,45 +9,100 @@
 import UIKit
 import CocoaMQTT
 
-class MqttViewController: UIViewController, CocoaMQTTDelegate {
+class MqttViewController: UIViewController {
 
+    @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var inputTextField: UITextField!
+    
+    @IBOutlet weak var sendButton: UIButton!
+    
+    var mqtt: CocoaMQTT?
+    
+    var messages: [String] = [] {
+        didSet {
+            tableView.reloadData()
+            scrollToBottom()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 
         // Do any additional setup after loading the view.
-        let clientIdPid = "CocoaMQTT-" + String(NSProcessInfo().processIdentifier)
-        let mqtt = CocoaMQTT(clientId: clientIdPid, host: "m12.cloudmqtt.com", port: 17922)
-        mqtt.username = "raymond"
-        mqtt.password = "qwert"
-        mqtt.willMessage = CocoaMQTTWill(topic: "/will", message: "dieout")
-        mqtt.keepAlive = 90
-        mqtt.delegate = self
-        mqtt.connect()
-//        mqtt.subscribe("test")
-//        mqtt.ping()
-        mqtt.publish("test", withString: "Hello")
+        tableView.dataSource = self;
+        tableView.delegate = self;
+
+        connectMQTT()
         
 //        dispatch_main()
     }
 
+    deinit {
+        mqtt?.disconnect()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func sendMessage(sender: AnyObject) {
+        if let text = inputTextField.text {
+            mqtt?.publish("test", withString: text)
+            inputTextField.text = ""
+        }
+        
     }
-    */
     
+    func scrollToBottom() {
+        let count = messages.count
+        if count > 3 {
+            let indexPath = NSIndexPath(forRow: count - 1, inSection: 0)
+            tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
+        }
+    }
 
-    // MARK: - CocoaMQTTDelegate
+}
+
+
+// MARK: - TableView DataSource and Delegate
+
+extension MqttViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1;
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count;
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("MQTTCell")
+        cell!.textLabel?.text = messages[indexPath.row]
+        return cell!;
+    }
+}
+
+// MARK: - CocoaMQTTDelegate
+
+extension MqttViewController: CocoaMQTTDelegate {
+    
+    func connectMQTT() {
+        let clientIdPid = "CocoaMQTT-" + String(NSProcessInfo().processIdentifier)
+        mqtt = CocoaMQTT(clientId: clientIdPid, host: "m12.cloudmqtt.com", port: 17922)
+        mqtt?.username = "raymond"
+        mqtt?.password = "qwert"
+        mqtt?.willMessage = CocoaMQTTWill(topic: "/will", message: "dieout")
+        mqtt?.keepAlive = 90
+        mqtt?.delegate = self
+        mqtt?.connect()
+        //        mqtt.subscribe("test")
+        //        mqtt.ping()
+        //mqtt.publish("test", withString: "Hello")
+    }
     
     func mqtt(mqtt: CocoaMQTT, didConnect host: String, port: Int) {
         debugPrint(["did connect: ", host, port])
@@ -61,7 +116,7 @@ class MqttViewController: UIViewController, CocoaMQTTDelegate {
     }
     
     func mqtt(mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
-        debugPrint(["did publish message: ", message])
+        debugPrint(["did publish message: ", message.topic, message.string])
     }
     
     func mqtt(mqtt: CocoaMQTT, didPublishAck id: UInt16) {
@@ -69,7 +124,9 @@ class MqttViewController: UIViewController, CocoaMQTTDelegate {
     }
     
     func mqtt(mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 ) {
-        debugPrint(["did receive message: ", message])
+        debugPrint(["did receive message: ", message.topic, message.string])
+        messages.append(message.string!);
+        tableView.reloadData();
     }
     
     func mqtt(mqtt: CocoaMQTT, didSubscribeTopic topic: String) {

@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Master-->
@@ -68,9 +69,64 @@
                     <view key="view" contentMode="scaleToFill" id="keF-Xq-1Ch">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TcP-Os-aQf" userLabel="Table">
+                                <rect key="frame" x="0.0" y="59" width="600" height="145"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MQTTCell" id="wdQ-OM-5W6" userLabel="Table Cell">
+                                        <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wdQ-OM-5W6" id="wbi-AI-ymg">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tUg-yD-Dar">
+                                <rect key="frame" x="0.0" y="194" width="600" height="53"/>
+                                <subviews>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Cae-jy-GqV" userLabel="Msg Input">
+                                        <rect key="frame" x="8" y="8" width="510" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Uh-Aj-Fhk" userLabel="Send">
+                                        <rect key="frame" x="526" y="8" width="66" height="30"/>
+                                        <state key="normal" title="Send"/>
+                                        <connections>
+                                            <action selector="sendMessage:" destination="Us6-pi-ZrM" eventType="touchUpInside" id="fwb-s6-0Ix"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="7Uh-Aj-Fhk" secondAttribute="trailing" constant="8" id="B0f-dD-MdI"/>
+                                    <constraint firstItem="Cae-jy-GqV" firstAttribute="leading" secondItem="tUg-yD-Dar" secondAttribute="leading" constant="8" id="BbU-kY-ZMd"/>
+                                    <constraint firstAttribute="bottom" secondItem="Cae-jy-GqV" secondAttribute="bottom" constant="15" id="Drf-Vg-eBp"/>
+                                    <constraint firstItem="7Uh-Aj-Fhk" firstAttribute="leading" secondItem="Cae-jy-GqV" secondAttribute="trailing" constant="8" id="HU6-Ph-TwQ"/>
+                                    <constraint firstItem="Cae-jy-GqV" firstAttribute="top" secondItem="tUg-yD-Dar" secondAttribute="top" constant="8" id="Prp-FG-hie"/>
+                                    <constraint firstItem="7Uh-Aj-Fhk" firstAttribute="height" secondItem="Cae-jy-GqV" secondAttribute="height" id="X1i-ee-WSg"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="TNp-oe-xfy" firstAttribute="top" secondItem="tUg-yD-Dar" secondAttribute="bottom" id="Dwf-3U-m7f"/>
+                            <constraint firstItem="tUg-yD-Dar" firstAttribute="width" secondItem="TcP-Os-aQf" secondAttribute="width" id="GZP-qZ-3e0"/>
+                            <constraint firstItem="TcP-Os-aQf" firstAttribute="top" secondItem="FwE-7u-jk7" secondAttribute="bottom" constant="-5" id="VAN-es-Zj3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="TcP-Os-aQf" secondAttribute="trailing" constant="-20" id="aB3-fT-AIw"/>
+                            <constraint firstItem="TcP-Os-aQf" firstAttribute="leading" secondItem="keF-Xq-1Ch" secondAttribute="leadingMargin" constant="-20" id="gQJ-bz-FMj"/>
+                            <constraint firstItem="tUg-yD-Dar" firstAttribute="top" secondItem="TcP-Os-aQf" secondAttribute="bottom" constant="-1" id="opI-eX-I0f"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="MQTT" id="nd1-Py-ymA"/>
+                    <connections>
+                        <outlet property="inputTextField" destination="Cae-jy-GqV" id="qP0-pt-bTf"/>
+                        <outlet property="sendButton" destination="7Uh-Aj-Fhk" id="efj-uO-zKl"/>
+                        <outlet property="tableView" destination="TcP-Os-aQf" id="zgj-dA-rNC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KuQ-2r-HIb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
